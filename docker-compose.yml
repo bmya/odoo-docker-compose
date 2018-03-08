@@ -1,36 +1,30 @@
 version: '2'
 services:
-  odoo:
-    restart: always
-    container_name: odoo10e
-    image: hub.bmya.cl:5000/odoo-bmya10e:l10
-    command: -- -c /etc/odoo/odoo.conf
-    depends_on:
-      - db
-    ports:
-      - "8069:8069"
-    volumes:
-      - odoo_vol:/var/lib/odoo
-      - ./extra-addons:/mnt/extra-addons
-      - ./conf10:/etc/odoo
-      #- /opt/odoo/pysiidte:/usr/local/lib/python2.7/dist-packages/pysiidte-0.1-py2.7.egg
-    environment:
-      - DB_PORT_5432_TCP_ADDR=db
-      - DB_PORT_5432_TCP_PORT=5432
-      - DB_ENV_POSTGRES_USER=odoo
-      - DB_ENV_POSTGRES_PASSWORD=odoo
-  db:
-    restart: always
-    container_name: db
-    image: postgres:9.5
-    ports:
-      - "127.0.0.1:5433:5432"
-    environment:
-      - POSTGRES_USER=odoo
-      - POSTGRES_PASSWORD=odoo
-    volumes:
-      - pg_data:/var/lib/postgresql/data
+    odoo:
+        container_name: odoo11e
+        image: hub.bmya.cl:5000/odoo-bmya11:l02
+        command: -- -c /etc/odoo/odoo.conf 
+        # command: bash
+        networks:
+            - default
+            - pg_default
+        external_links:
+            - db:db
+        ports:
+            - "8089:8069"
+        volumes:
+            - odoo-data:/var/lib/odoo
+            - ./extra-addons:/mnt/extra-addons
+            - ./conf:/etc/odoo
+        environment:
+            - DB_PORT_5432_TCP_ADDR=db
+            - DB_PORT_5432_TCP_PORT=5432
+            - DB_ENV_POSTGRES_USER=odoo
+            - DB_ENV_POSTGRES_PASSWORD=odoo
+networks:
+     default:
+         driver: bridge
+     pg_default:
+         external: true
 volumes:
-  odoo_vol:
-  pg_data:
-
+    odoo-data:
